@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MLabs Test Page 1 - Landing Page</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 MLabs - Teste de Tracking</h1>
+            <p>Página de teste para validar o sistema de tracking de parâmetros</p>
+        </header>
+
+        <main>
+            <section class="tracking-info">
+                <h2>📊 Informações de Tracking Atual</h2>
+                <div id="tracking-display" class="tracking-box">
+                    <p>Carregando informações de tracking...</p>
+                </div>
+                <button onclick="refreshTrackingInfo()" class="btn btn-secondary">🔄 Atualizar Info</button>
+            </section>
+
+            <section class="url-examples">
+                <h2>🔗 Exemplos de URLs para Teste</h2>
+                <div class="url-box">
+                    <h3>URL com UTM Completo:</h3>
+                    <code>?utm_source=google&utm_medium=cpc&utm_campaign=institucional&gclid=Cj0KCQjw267GBhCSARIsAOjVJ4FYsqQY-_dptCMCHRDE0LNt4pVZvC-FEAT5qo8st_ox7zLJf118aVMaAs-uEALw_wcB&coupon=BLOGMLABS</code>
+                    <button onclick="simulateUrlParams()" class="btn btn-secondary">✨ Simular Parâmetros</button>
+                </div>
+            </section>
+
+            <section class="buttons-section">
+                <h2>🎯 Botões de Teste</h2>
+                <div class="buttons-grid">
+                    <a href="https://accounts.mlabs.io/start" class="btn btn-primary" data-mlabs-track>
+                        🎁 Teste Grátis
+                    </a>
+                    <a href="https://accounts.mlabs.io/register" class="btn btn-success" data-mlabs-track>
+                        📝 Cadastro
+                    </a>
+                    <a href="test-page-2.html" class="btn btn-info">
+                        ➡️ Ir para Página 2 (Formulário)
+                    </a>
+                </div>
+            </section>
+
+            <section class="form-section">
+                <h2>📋 Formulário de Cadastro Rápido</h2>
+                <form data-mlabs-form class="signup-form">
+                    <div class="form-group">
+                        <label for="name">Nome Completo:</label>
+                        <input type="text" id="name" name="name" required placeholder="João Silva">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" required placeholder="joao@example.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Senha:</label>
+                        <input type="password" id="password" name="password" required placeholder="Senha@123">
+                        <small>Mínimo 6 caracteres: 1 maiúscula, 1 minúscula, 1 número, 1 especial</small>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">🚀 Criar Conta</button>
+                </form>
+            </section>
+
+            <section class="debug-section">
+                <h2>🛠️ Debug Tools</h2>
+                <div class="debug-buttons">
+                    <button onclick="showAllCookies()" class="btn btn-secondary">🍪 Ver Cookies</button>
+                    <button onclick="clearAllCookies()" class="btn btn-warning">🗑️ Limpar Cookies</button>
+                    <button onclick="exportTrackingData()" class="btn btn-info">📤 Exportar Dados</button>
+                </div>
+                <div id="debug-output" class="debug-output"></div>
+            </section>
+        </main>
+
+        <footer>
+            <p>MLabs Tracking Test Page - Versão 1.0</p>
+            <p>URL atual: <span id="current-url"></span></p>
+        </footer>
+    </div>
+
+    <!-- Include the tracking script -->
+    <script src="mlabs-tracking.js"></script>
+    
+    <!-- Page-specific JavaScript -->
+    <script>
+        // Update tracking info display
+        function refreshTrackingInfo() {
+            const trackingData = window.mlabsTracker.debug();
+            const display = document.getElementById('tracking-display');
+            
+            if (Object.keys(trackingData).length === 0) {
+                display.innerHTML = '<p style="color: #666;">Nenhum parâmetro de tracking encontrado.</p>';
+            } else {
+                let html = '<table class="tracking-table">';
+                html += '<tr><th>Parâmetro</th><th>Valor</th></tr>';
+                
+                Object.entries(trackingData).forEach(([key, value]) => {
+                    html += `<tr><td><strong>${key}</strong></td><td>${value}</td></tr>`;
+                });
+                
+                html += '</table>';
+                display.innerHTML = html;
+            }
+        }
+
+        // Simulate URL parameters for testing
+        function simulateUrlParams() {
+            const params = new URLSearchParams();
+            params.set('utm_source', 'google');
+            params.set('utm_medium', 'cpc');
+            params.set('utm_campaign', 'teste-tracking');
+            params.set('gclid', 'Cj0KCQjw267GBhCSARIsAOjVJ4FYsqQY-_test123');
+            params.set('coupon', 'BLOGMLABS');
+            
+            const newUrl = window.location.pathname + '?' + params.toString();
+            window.location.href = newUrl;
+        }
+
+        // Show all cookies
+        function showAllCookies() {
+            const cookies = document.cookie.split(';').map(c => c.trim()).filter(c => c);
+            const output = document.getElementById('debug-output');
+            
+            if (cookies.length === 0) {
+                output.innerHTML = '<p>Nenhum cookie encontrado.</p>';
+            } else {
+                let html = '<h3>Cookies Atuais:</h3><ul>';
+                cookies.forEach(cookie => {
+                    const [name, value] = cookie.split('=');
+                    html += `<li><strong>${name}</strong>: ${decodeURIComponent(value || '')}</li>`;
+                });
+                html += '</ul>';
+                output.innerHTML = html;
+            }
+        }
+
+        // Clear all MLabs cookies
+        function clearAllCookies() {
+            const cookies = document.cookie.split(';');
+            cookies.forEach(cookie => {
+                const [name] = cookie.split('=');
+                if (name.trim().startsWith('mlabs_')) {
+                    document.cookie = `${name.trim()}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+                }
+            });
+            
+            document.getElementById('debug-output').innerHTML = '<p style="color: green;">Cookies MLabs limpos com sucesso!</p>';
+            setTimeout(refreshTrackingInfo, 500);
+        }
+
+        // Export tracking data
+        function exportTrackingData() {
+            const data = {
+                timestamp: new Date().toISOString(),
+                url: window.location.href,
+                tracking: window.mlabsTracker.debug(),
+                userAgent: navigator.userAgent
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `mlabs-tracking-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update current URL display
+            document.getElementById('current-url').textContent = window.location.href;
+            
+            // Initial tracking info load
+            setTimeout(refreshTrackingInfo, 1000);
+        });
+    </script>
+</body>
+</html>
